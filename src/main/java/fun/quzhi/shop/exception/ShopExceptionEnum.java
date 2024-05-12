@@ -9,7 +9,9 @@ public enum ShopExceptionEnum {
     NEED_USERNAME(10002, "用户名不能为空"),
     NEED_PASSWORD(10003, "密码不能为空"),
     USERNAME_EXISTS(10004, "用户名已存在"),
-    REGISTER_ERROR(10004, "创建用户失败，请重试");
+    REGISTER_ERROR(10004, "创建用户失败，请重试"),
+
+    SYSTEM_ERROR(20000, "系统异常");
 
     Integer code;
 
