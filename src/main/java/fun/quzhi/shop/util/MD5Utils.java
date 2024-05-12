@@ -17,15 +17,15 @@ public class MD5Utils {
         return Base64.encodeBase64String(md5.digest(str.getBytes()));
     }
 
-    public static String getPasswordMD5Str(String str) throws  NoSuchAlgorithmException {
+    public static String getPasswordMD5Str(String str, String salt) throws  NoSuchAlgorithmException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
 
-        return Base64.encodeBase64String(md5.digest((str + Constant.PASSWORD_SALT).getBytes()));
+        return Base64.encodeBase64String(md5.digest((str + salt).getBytes()));
     }
 
     public static void main(String[] args) {
         try {
-           var val = MD5Utils.getPasswordMD5Str("abc");
+           var val = MD5Utils.getPasswordMD5Str("abc", "111");
            System.out.println(val);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.service.UserService;
 import fun.quzhi.shop.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -18,6 +19,9 @@ import java.util.UUID;
  */
 @Service
 public class UserServiceImpl implements UserService {
+
+    @Value("${app.salt}")
+    private String appSalt;
 
     @Autowired
     UserMapper userMapper;
@@ -41,10 +45,12 @@ public class UserServiceImpl implements UserService {
         user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
         try {
-            user.setPassword(MD5Utils.getPasswordMD5Str(password));
+            user.setPassword(MD5Utils.getPasswordMD5Str(password, appSalt));
         } catch(NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+        user.setSalt(appSalt);
 
         // TODO
         String createBy = "40e17455-7ae0-4d3b-859d-08e4b2794153";

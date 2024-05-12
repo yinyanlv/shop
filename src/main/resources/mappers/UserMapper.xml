@@ -6,6 +6,7 @@
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
     <result column="role" jdbcType="INTEGER" property="role" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -13,7 +14,8 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, username, nickname, `password`, `role`, create_by, create_time, update_by, update_time
+    id, username, nickname, `password`, salt, `role`, create_by, create_time, update_by, 
+    update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -27,13 +29,13 @@
   </delete>
   <insert id="insert" parameterType="fun.quzhi.shop.model.pojo.User">
     insert into shop_user (id, username, nickname, 
-      `password`, `role`, create_by, 
-      create_time, update_by, update_time
-      )
+      `password`, salt, `role`, 
+      create_by, create_time, update_by, 
+      update_time)
     values (#{id,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="fun.quzhi.shop.model.pojo.User">
     insert into shop_user
@@ -49,6 +51,9 @@
       </if>
       <if test="password != null">
         `password`,
+      </if>
+      <if test="salt != null">
+        salt,
       </if>
       <if test="role != null">
         `role`,
@@ -79,6 +84,9 @@
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
+      <if test="salt != null">
+        #{salt,jdbcType=VARCHAR},
+      </if>
       <if test="role != null">
         #{role,jdbcType=INTEGER},
       </if>
@@ -108,6 +116,9 @@
       <if test="password != null">
         `password` = #{password,jdbcType=VARCHAR},
       </if>
+      <if test="salt != null">
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
       <if test="role != null">
         `role` = #{role,jdbcType=INTEGER},
       </if>
@@ -131,6 +142,7 @@
     set username = #{username,jdbcType=VARCHAR},
       nickname = #{nickname,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
       `role` = #{role,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -140,7 +152,7 @@
   </update>
   <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
-      <include refid="Base_Column_List"></include>
+    <include refid="Base_Column_List" />
     from shop_user
     where username = #{username,jdbcType=VARCHAR}
   </select>
