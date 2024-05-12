@@ -1,13 +1,16 @@
 package fun.quzhi.shop.service.impl;
 
-
 import fun.quzhi.shop.exception.ShopException;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.dao.UserMapper;
 import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.service.UserService;
+import fun.quzhi.shop.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 
 /**
@@ -34,11 +37,19 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setId("test");
+
+        user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
-        user.setPassword(password);
-        user.setCreateBy("x");
-        user.setUpdateBy("x");
+        try {
+            user.setPassword(MD5Utils.getPasswordMD5Str(password));
+        } catch(NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        // TODO
+        String createBy = "40e17455-7ae0-4d3b-859d-08e4b2794153";
+        user.setCreateBy(createBy);
+        user.setUpdateBy(createBy);
 
         int count = userMapper.insertSelective(user);
         if (count == 0) {
@@ -46,4 +57,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public static void main(String[] args) {
+        var uuid = UUID.randomUUID().toString();
+
+        System.out.println(uuid);
+    }
 }
