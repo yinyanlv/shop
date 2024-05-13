@@ -49,9 +49,7 @@ public class UserServiceImpl implements UserService {
         } catch(NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
         user.setSalt(appSalt);
-
         // TODO
         String createBy = "40e17455-7ae0-4d3b-859d-08e4b2794153";
         user.setCreateBy(createBy);
@@ -61,6 +59,51 @@ public class UserServiceImpl implements UserService {
         if (count == 0) {
            throw new ShopException(ShopExceptionEnum.REGISTER_ERROR);
         }
+    }
+
+    @Override
+    public User login(String username, String password) throws ShopException {
+
+        // 查询用户名是否已存在
+        User res = userMapper.selectByUsername(username);
+        if (res == null) {
+            throw new ShopException(ShopExceptionEnum.LOGIN_ERROR);
+        }
+
+        String salt = res.getSalt();
+        String curPwd;
+
+        try {
+            curPwd = MD5Utils.getPasswordMD5Str(password, salt);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        User user = userMapper.selectLogin(username, curPwd);
+
+        if (user == null) {
+            throw new ShopException(ShopExceptionEnum.LOGIN_ERROR);
+        }
+
+        return user;
+    }
+
+    @Override
+    public void updateUserInfo(User user) throws ShopException {
+        int count = userMapper.updateByPrimaryKeySelective(user);
+        if (count > 1) {
+            throw new ShopException(ShopExceptionEnum.UPDATE_USER_ERROR);
+        }
+    }
+
+    @Override
+    public boolean isAdmin(User user) {
+        int role = user.getRole();
+        if (role == 2 || role == 3) {
+            return true;
+        }
+
+        return false;
     }
 
     public static void main(String[] args) {
