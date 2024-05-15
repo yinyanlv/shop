@@ -3,7 +3,7 @@ package fun.quzhi.shop.exception;
 /**
  * 统一异常
  */
-public class ShopException extends Exception {
+public class ShopException extends RuntimeException {
     private final Integer code;
     private final String message;
 

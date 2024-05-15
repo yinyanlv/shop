@@ -13,7 +13,11 @@ public enum ShopExceptionEnum {
     LOGIN_ERROR(10005, "登录失败"),
     NEED_LOGIN(10006, "用户未登录"),
     UPDATE_USER_ERROR(10007, "更新用户信息失败"),
-    NEED_ADMIN(10007, "无管理员权限"),
+    PARAM_IS_NULL(10008, "参数不能为空"),
+    NAME_EXISTS(10009, "名称已存在"),
+    NEED_ADMIN(10010, "无管理员权限"),
+    CRATE_FAILED(10011, "新增失败"),
+    REQUEST_PARAM_ERROR(10012, "参数错误"),
     SYSTEM_ERROR(20000, "系统异常");
 
 
