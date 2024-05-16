@@ -7,6 +7,8 @@ import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.model.request.AddCategoryReq;
 import fun.quzhi.shop.service.CategoryService;
 import fun.quzhi.shop.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 目录
  */
+@Tag(name = "商品目录")
 @Controller
 public class CategoryController {
     @Autowired
@@ -27,6 +30,7 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
+    @Operation(summary = "后台添加商品目录")
     @PostMapping("admin/category/add")
     @ResponseBody
     public CommonResponse addCategory(HttpSession session, @Valid @RequestBody AddCategoryReq addCategoryReq) {

@@ -7,6 +7,7 @@ import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.dao.UserMapper;
 import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 用户
  */
+@Tag(name = "用户")
 @Controller
 public class UserController {
 
@@ -116,3 +118,4 @@ public class UserController {
     }
 
 }
+
