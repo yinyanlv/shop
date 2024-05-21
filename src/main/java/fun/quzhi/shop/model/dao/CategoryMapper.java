@@ -2,6 +2,8 @@ package fun.quzhi.shop.model.dao;
 
 import fun.quzhi.shop.model.pojo.Category;
 
+import java.util.List;
+
 public interface CategoryMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,6 @@ public interface CategoryMapper {
     int updateByPrimaryKey(Category row);
 
     Category selectByName(String name);
+
+    List<Category> selectList();
 }

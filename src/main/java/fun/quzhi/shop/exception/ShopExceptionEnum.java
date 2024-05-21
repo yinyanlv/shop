@@ -17,6 +17,8 @@ public enum ShopExceptionEnum {
     NAME_EXISTS(10009, "名称已存在"),
     NEED_ADMIN(10010, "无管理员权限"),
     CRATE_FAILED(10011, "新增失败"),
+    DELETE_FAILED(10012, "删除失败"),
+    UPDATE_FAILED(10013, "更新失败"),
     REQUEST_PARAM_ERROR(10012, "参数错误"),
     SYSTEM_ERROR(20000, "系统异常");
 

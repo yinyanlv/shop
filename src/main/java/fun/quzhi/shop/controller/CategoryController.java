@@ -1,5 +1,6 @@
 package fun.quzhi.shop.controller;
 
+import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.common.CommonResponse;
 import fun.quzhi.shop.common.Constant;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
@@ -30,7 +31,7 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    @Operation(summary = "后台添加商品目录")
+    @Operation(summary = "添加商品目录")
     @PostMapping("admin/category/add")
     @ResponseBody
     public CommonResponse addCategory(HttpSession session, @Valid @RequestBody AddCategoryReq addCategoryReq) {
@@ -39,7 +40,6 @@ public class CategoryController {
         }
 
         User curUser = (User)session.getAttribute(Constant.SESSION_USER_KEY);
-
         if (curUser == null) {
             return CommonResponse.error(ShopExceptionEnum.NEED_LOGIN);
         }
@@ -57,9 +57,20 @@ public class CategoryController {
         return CommonResponse.success();
     }
 
+    @Operation(summary = "删除商品目录")
     @PostMapping("admin/category/delete")
     @ResponseBody
-    public CommonResponse deleteCategory() {
-       return null;
+    public CommonResponse deleteCategory(@RequestParam Integer id) {
+        categoryService.delete(id);
+        return CommonResponse.success();
+    }
+
+
+    @Operation(summary = "管理员查询商品目录")
+    @PostMapping("admin/category/list")
+    @ResponseBody
+    public CommonResponse listCategoryForAdmin(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        PageInfo pageInfo = categoryService.listForAdmin(pageNum, pageSize);
+        return CommonResponse.success(pageInfo);
     }
 }

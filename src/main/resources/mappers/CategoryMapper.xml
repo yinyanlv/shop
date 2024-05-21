@@ -144,4 +144,9 @@
       from shop_category
       where name = #{name,jdbcType=VARCHAR}
   </select>
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from shop_category
+  </select>
 </mapper>
