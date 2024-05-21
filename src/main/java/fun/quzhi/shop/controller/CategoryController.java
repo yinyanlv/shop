@@ -6,6 +6,7 @@ import fun.quzhi.shop.common.Constant;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.model.request.AddCategoryReq;
+import fun.quzhi.shop.model.vo.CategoryVO;
 import fun.quzhi.shop.service.CategoryService;
 import fun.quzhi.shop.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * 目录
@@ -66,11 +69,19 @@ public class CategoryController {
     }
 
 
-    @Operation(summary = "管理员查询商品目录")
+    @Operation(summary = "后台查询商品目录")
     @PostMapping("admin/category/list")
     @ResponseBody
     public CommonResponse listCategoryForAdmin(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         PageInfo pageInfo = categoryService.listForAdmin(pageNum, pageSize);
         return CommonResponse.success(pageInfo);
+    }
+
+    @Operation(summary = "前台查询商品目录")
+    @PostMapping("category/list")
+    @ResponseBody
+    public CommonResponse listCategoryForCustomer() {
+        List<CategoryVO> list = categoryService.listForCustomer();
+        return CommonResponse.success(list);
     }
 }

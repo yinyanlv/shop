@@ -7,11 +7,15 @@ import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.dao.CategoryMapper;
 import fun.quzhi.shop.model.pojo.Category;
 import fun.quzhi.shop.model.request.AddCategoryReq;
+import fun.quzhi.shop.model.vo.CategoryVO;
 import fun.quzhi.shop.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,5 +59,26 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> list = categoryMapper.selectList();
         PageInfo pageInfo = new PageInfo<>(list);
         return pageInfo;
+    }
+
+    @Override
+    @Cacheable(value = "categoryListForCustomer")
+    public List<CategoryVO> listForCustomer() {
+        List<CategoryVO> list = new ArrayList<>();
+        recursivelyFindCategoryList(list, 0);
+        return list;
+    }
+
+    private void recursivelyFindCategoryList(List<CategoryVO> list, Integer parentId) {
+       List<Category> tempList =  categoryMapper.selectListByParentId(parentId);
+       if (!CollectionUtils.isEmpty(tempList)) {
+           for (int i = 0; i < tempList.size(); i++) {
+               Category category = tempList.get(i);
+               CategoryVO categoryVO = new CategoryVO();
+               BeanUtils.copyProperties(category, categoryVO);
+               list.add(categoryVO);
+               recursivelyFindCategoryList(categoryVO.getChildren(), categoryVO.getId());
+           }
+       }
     }
 }

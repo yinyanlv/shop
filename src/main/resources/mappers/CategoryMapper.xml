@@ -149,4 +149,10 @@
     <include refid="Base_Column_List"></include>
     from shop_category
   </select>
+  <select id="selectListByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from shop_category
+    where parent_id = #{parentId}
+  </select>
 </mapper>
