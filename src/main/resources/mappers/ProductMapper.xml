@@ -18,33 +18,33 @@
     <result column="detail" jdbcType="LONGVARCHAR" property="detail" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, image, category_id, price, stock, `status`, create_by, create_time, update_by, 
+    id, `name`, image, category_id, price, stock, `status`, create_by, create_time, update_by,
     update_time
   </sql>
   <sql id="Blob_Column_List">
     detail
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from shop_product
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from shop_product
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="fun.quzhi.shop.model.pojo.Product">
-    insert into shop_product (id, `name`, image, 
-      category_id, price, stock, 
-      `status`, create_by, create_time, 
+    insert into shop_product (id, `name`, image,
+      category_id, price, stock,
+      `status`, create_by, create_time,
       update_by, update_time, detail
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
-      #{categoryId,jdbcType=INTEGER}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+      #{categoryId,jdbcType=INTEGER}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{detail,jdbcType=LONGVARCHAR}
       )
   </insert>
@@ -195,4 +195,9 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByName" parameterType="java.lang.String" resultType="fun.quzhi.shop.model.pojo.Product">
+    select <include refid="Base_Column_List"></include>
+    from shop_product
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
 </mapper>

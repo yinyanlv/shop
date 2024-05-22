@@ -16,4 +16,6 @@ public interface ProductMapper {
     int updateByPrimaryKeyWithBLOBs(Product row);
 
     int updateByPrimaryKey(Product row);
+
+    Product selectByName(String name);
 }

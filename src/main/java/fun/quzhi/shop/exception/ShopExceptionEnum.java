@@ -20,6 +20,8 @@ public enum ShopExceptionEnum {
     DELETE_FAILED(10012, "删除失败"),
     UPDATE_FAILED(10013, "更新失败"),
     REQUEST_PARAM_ERROR(10012, "参数错误"),
+    UPLOAD_DIR_ERROR(10013, "上传文件夹创建失败"),
+    UPLOAD_FILE_FAILED(10014, "上传文件失败"),
     SYSTEM_ERROR(20000, "系统异常");
 
 
