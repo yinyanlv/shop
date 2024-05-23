@@ -72,4 +72,12 @@ public class ProductServiceImpl implements ProductService {
             throw new ShopException(ShopExceptionEnum.DELETE_FAILED);
         }
     }
+
+
+    @Override
+    public void batchUpdateStatus(Integer[] ids, Integer status) {
+        // TODO
+        String updateBy = "40e17455-7ae0-4d3b-859d-08e4b2794153";
+        productMapper.batchUpdateStatusByPrimaryKey(ids, status, updateBy);
+    }
 }

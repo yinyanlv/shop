@@ -48,5 +48,13 @@ public class ProductAdminController {
         productService.delete(id);
         return CommonResponse.success();
     }
+
+    @Operation(summary = "批量更新商品状态")
+    @PostMapping("admin/product/batch-update-status")
+    @ResponseBody
+    public CommonResponse batchUpdateStatus( @RequestParam Integer[] ids, Integer status) {
+        productService.batchUpdateStatus(ids, status);
+        return CommonResponse.success();
+    }
 }
 

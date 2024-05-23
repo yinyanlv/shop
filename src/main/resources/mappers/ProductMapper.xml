@@ -200,4 +200,13 @@
     from shop_product
     where name = #{name,jdbcType=VARCHAR}
   </select>
+  <update id="batchUpdateStatusByPrimaryKey">
+    update shop_product
+    set `status` = #{status},
+        update_by = #{updateBy}
+    where id in
+      <foreach collection="ids" open="(" close=")" item="id" separator=",">
+        #{id}
+      </foreach>
+  </update>
 </mapper>
