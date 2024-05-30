@@ -3,6 +3,8 @@ package fun.quzhi.shop.model.dao;
 import fun.quzhi.shop.model.pojo.Product;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface ProductMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -21,4 +23,6 @@ public interface ProductMapper {
     Product selectByName(String name);
 
     int batchUpdateStatusByPrimaryKey(@Param("ids") Integer[] ids, @Param("status") Integer status, @Param("updateBy") String updateBy);
+
+    List<Product> selectListForAdmin();
 }

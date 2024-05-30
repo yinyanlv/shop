@@ -209,4 +209,9 @@
         #{id}
       </foreach>
   </update>
+  <select id="selectListForAdmin" resultType="fun.quzhi.shop.model.pojo.Product">
+    select <include refid="Base_Column_List"></include>
+    from shop_product
+    order by update_time desc
+  </select>
 </mapper>

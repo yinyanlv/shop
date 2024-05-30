@@ -1,5 +1,6 @@
 package fun.quzhi.shop.controller;
 
+import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.common.CommonResponse;
 import fun.quzhi.shop.model.pojo.Product;
 import fun.quzhi.shop.model.request.AddProductReq;
@@ -55,6 +56,14 @@ public class ProductAdminController {
     public CommonResponse batchUpdateStatus( @RequestParam Integer[] ids, Integer status) {
         productService.batchUpdateStatus(ids, status);
         return CommonResponse.success();
+    }
+
+    @Operation(summary = "后台商品列表")
+    @PostMapping("admin/product/list")
+    @ResponseBody
+    public CommonResponse list( @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        PageInfo pageInfo = productService.listForAdmin(pageNum, pageSize);
+        return CommonResponse.success(pageInfo);
     }
 }
 

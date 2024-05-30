@@ -1,5 +1,6 @@
 package fun.quzhi.shop.service;
 
+import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.model.pojo.Product;
 import fun.quzhi.shop.model.request.AddProductReq;
 
@@ -14,4 +15,8 @@ public interface ProductService {
     void delete(Integer id);
 
     void batchUpdateStatus(Integer[] ids, Integer status);
+
+    PageInfo listForAdmin(Integer pageNum, Integer pageSize);
+
+    Product detail(Integer id);
 }

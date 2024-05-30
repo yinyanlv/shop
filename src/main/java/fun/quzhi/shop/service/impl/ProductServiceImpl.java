@@ -1,5 +1,7 @@
 package fun.quzhi.shop.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.exception.ShopException;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.dao.ProductMapper;
@@ -9,6 +11,8 @@ import fun.quzhi.shop.service.ProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -79,5 +83,19 @@ public class ProductServiceImpl implements ProductService {
         // TODO
         String updateBy = "40e17455-7ae0-4d3b-859d-08e4b2794153";
         productMapper.batchUpdateStatusByPrimaryKey(ids, status, updateBy);
+    }
+
+    @Override
+    public PageInfo listForAdmin(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> products =  productMapper.selectListForAdmin();
+        PageInfo pageInfo = new PageInfo(products);
+
+        return pageInfo;
+    }
+
+    @Override
+    public Product detail(Integer id) {
+        return productMapper.selectByPrimaryKey(id);
     }
 }
