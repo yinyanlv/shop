@@ -81,7 +81,7 @@ public class CategoryController {
     @PostMapping("category/list")
     @ResponseBody
     public CommonResponse listCategoryForCustomer() {
-        List<CategoryVO> list = categoryService.listForCustomer();
+        List<CategoryVO> list = categoryService.listForCustomer(0);
         return CommonResponse.success(list);
     }
 }

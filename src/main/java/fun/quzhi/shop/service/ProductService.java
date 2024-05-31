@@ -3,6 +3,7 @@ package fun.quzhi.shop.service;
 import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.model.pojo.Product;
 import fun.quzhi.shop.model.request.AddProductReq;
+import fun.quzhi.shop.model.request.ProductListReq;
 
 /**
  * 商品
@@ -19,4 +20,6 @@ public interface ProductService {
     PageInfo listForAdmin(Integer pageNum, Integer pageSize);
 
     Product detail(Integer id);
+
+    PageInfo list(ProductListReq productListReq);
 }
