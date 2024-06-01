@@ -40,7 +40,7 @@ public class CartServiceImpl implements CartService {
             String createBy = "40e17455-7ae0-4d3b-859d-08e4b2794153";
             cart.setCreateBy(createBy);
             cart.setUpdateBy(createBy);
-            cartMapper.insert(cart);
+            cartMapper.insertSelective(cart);
         } else {
             // 更新数量
             count = cart.getQuantity() + count;
