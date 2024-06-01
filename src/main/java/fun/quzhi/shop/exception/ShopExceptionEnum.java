@@ -22,6 +22,8 @@ public enum ShopExceptionEnum {
     REQUEST_PARAM_ERROR(10012, "参数错误"),
     UPLOAD_DIR_ERROR(10013, "上传文件夹创建失败"),
     UPLOAD_FILE_FAILED(10014, "上传文件失败"),
+    PRODUCT_NOT_SALE(10015, "商品不可售"),
+    PRODUCT_NOT_ENOUGH(10016, "商品库存不足"),
     SYSTEM_ERROR(20000, "系统异常");
 
 

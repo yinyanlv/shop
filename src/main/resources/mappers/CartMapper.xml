@@ -138,4 +138,10 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByUserIdAndProductId" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"></include>
+    from shop_cart
+    where user_id = #{userId}
+    and product_id = #{productId}
+  </select>
 </mapper>
