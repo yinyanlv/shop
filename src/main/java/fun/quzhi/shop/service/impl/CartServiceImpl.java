@@ -26,6 +26,16 @@ public class CartServiceImpl implements CartService {
     CartMapper cartMapper;
 
     @Override
+    public List<CartVO> list(String userId) {
+        List<CartVO> cartVOS = cartMapper.selectList(userId);
+        for (int i = 0; i < cartVOS.size(); i++) {
+            CartVO cartVO = cartVOS.get(i);
+            cartVO.setTotalPrice(cartVO.getPrice() * cartVO.getQuantity());
+        }
+        return cartVOS;
+    }
+
+    @Override
     public List<CartVO> add(String userId, Integer productId, Integer count) {
         validProduct(productId, count);
         Cart cart = cartMapper.selectByUserIdAndProductId(userId, productId);
@@ -52,7 +62,7 @@ public class CartServiceImpl implements CartService {
             newCart.setSelected(Constant.Cart.CHECKED);
             cartMapper.updateByPrimaryKeySelective(newCart);
         }
-        return null;
+        return list(userId);
     }
 
     private void  validProduct(Integer productId, Integer count) {
@@ -65,5 +75,34 @@ public class CartServiceImpl implements CartService {
         if (count > product.getStock()) {
             throw new ShopException(ShopExceptionEnum.PRODUCT_NOT_ENOUGH);
         }
+    }
+
+    @Override
+    public List<CartVO> update(String userId, Integer productId, Integer count) {
+        validProduct(productId, count);
+        Cart cart = cartMapper.selectByUserIdAndProductId(userId, productId);
+        if (cart == null) {
+            throw new ShopException(ShopExceptionEnum.UPDATE_FAILED);
+        } else {
+            Cart newCart = new Cart();
+            newCart.setId(cart.getId());
+            newCart.setQuantity(count);
+            newCart.setUserId(userId);
+            newCart.setProductId(productId);
+            newCart.setSelected(Constant.Cart.CHECKED);
+            cartMapper.updateByPrimaryKeySelective(newCart);
+        }
+        return list(userId);
+    }
+
+    @Override
+    public List<CartVO> delete(String userId, Integer productId) {
+        Cart cart = cartMapper.selectByUserIdAndProductId(userId, productId);
+        if (cart == null) {
+            throw new ShopException(ShopExceptionEnum.DELETE_FAILED);
+        } else {
+            cartMapper.deleteByPrimaryKey(cart.getId());
+        }
+        return list(userId);
     }
 }

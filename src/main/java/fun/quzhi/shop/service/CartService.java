@@ -9,5 +9,11 @@ import java.util.List;
  */
 public interface CartService {
 
+    List<CartVO> list(String userId);
+
     List<CartVO> add(String userId, Integer productId, Integer count);
+
+    List<CartVO> update(String userId, Integer productId, Integer count);
+
+    List<CartVO> delete(String userId, Integer productId);
 }

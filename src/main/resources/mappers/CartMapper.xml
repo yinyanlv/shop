@@ -138,6 +138,20 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectList" resultType="fun.quzhi.shop.model.vo.CartVO" parameterType="java.lang.String">
+    select
+      c.id as id,
+      p.id as productId,
+      c.user_id as userId,
+      c.quantity as quantity,
+      c.selected as selected,
+      p.price as price,
+      p.name as productName,
+      p.image as productImage
+      from shop_cart as c
+      left join shop_product as p on p.id = c.product_id
+    where c.user_id = #{userId} and p.status = 1
+  </select>
   <select id="selectByUserIdAndProductId" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"></include>
     from shop_cart

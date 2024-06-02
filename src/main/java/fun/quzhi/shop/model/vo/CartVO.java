@@ -17,6 +17,8 @@ public class CartVO implements Serializable {
 
     private Integer selected;
 
+    private Integer price;
+
     private Integer totalPrice;
 
     private String productName;
@@ -61,6 +63,14 @@ public class CartVO implements Serializable {
 
     public void setSelected(Integer selected) {
         this.selected = selected;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public Integer getTotalPrice() {
