@@ -16,4 +16,8 @@ public interface CartService {
     List<CartVO> update(String userId, Integer productId, Integer count);
 
     List<CartVO> delete(String userId, Integer productId);
+
+    List<CartVO> selectOrNot(String userId, Integer productId, Integer selected);
+
+    List<CartVO> selectAllOrNot(String userId, Integer selected);
 }

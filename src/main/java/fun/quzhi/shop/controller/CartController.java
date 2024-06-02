@@ -53,17 +53,17 @@ public class CartController {
         return CommonResponse.success(cartList);
     }
 
-    @Operation(summary = "选中购物车")
+    @Operation(summary = "选中/不选中购物车某商品")
     @PostMapping("select")
-    public CommonResponse select(Integer productId) {
-        List<CartVO> cartList =  cartService.delete(UserFilter.curUser.getId(), productId);
+    public CommonResponse select(Integer productId, Integer selected) {
+        List<CartVO> cartList =  cartService.selectOrNot(UserFilter.curUser.getId(), productId, selected);
         return CommonResponse.success(cartList);
     }
 
-    @Operation(summary = "全选购物车")
-    @PostMapping("select-all")
-    public CommonResponse selectAll(Integer productId) {
-        List<CartVO> cartList =  cartService.delete(UserFilter.curUser.getId(), productId);
+    @Operation(summary = "购物车全选/取消全选")
+    @PostMapping("selectAll")
+    public CommonResponse selectAll(Integer selected) {
+        List<CartVO> cartList =  cartService.selectAllOrNot(UserFilter.curUser.getId(), selected);
         return CommonResponse.success(cartList);
     }
 }

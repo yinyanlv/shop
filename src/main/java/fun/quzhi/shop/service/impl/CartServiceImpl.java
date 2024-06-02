@@ -105,4 +105,21 @@ public class CartServiceImpl implements CartService {
         }
         return list(userId);
     }
+
+    @Override
+    public List<CartVO> selectOrNot(String userId, Integer productId, Integer selected) {
+        Cart cart = cartMapper.selectByUserIdAndProductId(userId, productId);
+        if (cart == null) {
+            throw new ShopException(ShopExceptionEnum.UPDATE_FAILED);
+        } else {
+            cartMapper.selectOrNot(userId, productId, selected);
+        }
+        return list(userId);
+    }
+
+    @Override
+    public List<CartVO> selectAllOrNot(String userId,  Integer selected) {
+        cartMapper.selectOrNot(userId, null, selected);
+        return list(userId);
+    }
 }
