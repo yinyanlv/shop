@@ -24,6 +24,7 @@ public enum ShopExceptionEnum {
     UPLOAD_FILE_FAILED(10014, "上传文件失败"),
     PRODUCT_NOT_SALE(10015, "商品不可售"),
     PRODUCT_NOT_ENOUGH(10016, "商品库存不足"),
+    CART_SELECTED_EMPTY(10017, "购物车已勾选的商品为空"),
     SYSTEM_ERROR(20000, "系统异常");
 
 
