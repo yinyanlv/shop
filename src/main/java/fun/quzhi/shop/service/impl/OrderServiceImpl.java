@@ -5,6 +5,8 @@ import fun.quzhi.shop.exception.ShopException;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.filter.UserFilter;
 import fun.quzhi.shop.model.dao.CartMapper;
+import fun.quzhi.shop.model.dao.OrderItemMapper;
+import fun.quzhi.shop.model.dao.OrderMapper;
 import fun.quzhi.shop.model.dao.ProductMapper;
 import fun.quzhi.shop.model.pojo.Order;
 import fun.quzhi.shop.model.pojo.OrderItem;
@@ -16,6 +18,7 @@ import fun.quzhi.shop.service.OrderService;
 import fun.quzhi.shop.util.OrderCodeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -32,7 +35,14 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     CartMapper cartMapper;
 
+    @Autowired
+    OrderMapper orderMapper;
 
+    @Autowired
+    OrderItemMapper orderItemMapper;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public String create(CreateOrderReq createOrderReq) {
         // 用户id
         String userId = UserFilter.curUser.getId();
@@ -71,12 +81,26 @@ public class OrderServiceImpl implements OrderService {
         String orderCode = OrderCodeFactory.getOrderCode();
         order.setCode(orderCode);
         order.setUserId(userId);
+        order.setTotalPrice(totalPrice(orderItemList));
+        order.setReceiverName(createOrderReq.getReceiverName());
+        order.setReceiverPhone(createOrderReq.getReceiverPhone());
+        order.setReceiverAddress(createOrderReq.getReceiverAddress());
+        order.setStatus(Constant.OrderStatusEnum.UNPAID.getCode());
+        order.setPostage(0);
+        order.setPaymentType(1);
         order.setCreateBy(userId);
         order.setUpdateBy(userId);
-
+        // 插入到订单表
+        orderMapper.insertSelective(order);
         // 循环保存商品到order item表
+        for (OrderItem orderItem : orderItemList) {
+            orderItem.setOrderCode(orderCode);
+            orderItem.setCreateBy(userId);
+            orderItem.setUpdateBy(userId);
+            orderItemMapper.insertSelective(orderItem);
+        }
 
-        return null;
+        return orderCode;
     }
 
     public void validateStatusAndStock(List<CartVO> cartVOList) {
@@ -114,5 +138,13 @@ public class OrderServiceImpl implements OrderService {
         for(CartVO cartVO : cartVOList) {
             cartMapper.deleteByPrimaryKey(cartVO.getId());
         }
+    }
+
+    public Integer totalPrice(List<OrderItem> orderItemList) {
+        Integer totalPrice = 0;
+        for (OrderItem orderItem : orderItemList) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
     }
 }
