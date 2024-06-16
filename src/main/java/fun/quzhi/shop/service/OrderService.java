@@ -1,5 +1,6 @@
 package fun.quzhi.shop.service;
 
+import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.model.request.CreateOrderReq;
 import fun.quzhi.shop.model.vo.CartVO;
 import fun.quzhi.shop.model.vo.OrderVO;
@@ -12,6 +13,10 @@ import java.util.List;
 public interface OrderService {
 
     String create(CreateOrderReq createOrderReq);
+
+    PageInfo listForCustomer(Integer pageNum, Integer pageSize);
+
+    PageInfo listForAdmin(Integer pageNum, Integer pageSize);
 
     OrderVO detail(String orderCode);
 

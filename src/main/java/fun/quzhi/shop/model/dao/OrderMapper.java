@@ -2,6 +2,8 @@ package fun.quzhi.shop.model.dao;
 
 import fun.quzhi.shop.model.pojo.Order;
 
+import java.util.List;
+
 public interface OrderMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,8 @@ public interface OrderMapper {
     int updateByPrimaryKey(Order row);
 
     Order selectByOrderCode(String orderCode);
+
+    List<Order> selectForCustomer(String userId);
+
+    List<Order> selectAllForAdmin();
 }

@@ -1,13 +1,16 @@
 package fun.quzhi.shop.controller;
 
+import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.common.CommonResponse;
 import fun.quzhi.shop.model.request.CreateOrderReq;
 import fun.quzhi.shop.model.vo.OrderVO;
 import fun.quzhi.shop.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "订单管理")
 @RestController
 public class OrderController {
     @Autowired
@@ -25,6 +28,13 @@ public class OrderController {
     public CommonResponse detail(@RequestParam String orderCode) {
         OrderVO orderVO = orderService.detail(orderCode);
         return CommonResponse.success(orderVO);
+    }
+
+    @Operation(summary = "前台订单列表")
+    @PostMapping("order/list")
+    public CommonResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        PageInfo pageInfo = orderService.listForCustomer(pageNum, pageSize);
+        return CommonResponse.success(pageInfo);
     }
 
     @Operation(summary = "前台订单取消")

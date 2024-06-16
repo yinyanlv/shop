@@ -1,5 +1,7 @@
 package fun.quzhi.shop.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.zxing.WriterException;
 import fun.quzhi.shop.common.Constant;
 import fun.quzhi.shop.exception.ShopException;
@@ -160,6 +162,37 @@ public class OrderServiceImpl implements OrderService {
             totalPrice += orderItem.getTotalPrice();
         }
         return totalPrice;
+    }
+
+    @Override
+    public PageInfo listForCustomer(Integer pageNum, Integer pageSize) {
+        String userId = UserFilter.curUser.getId();
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectForCustomer(userId);
+        List<OrderVO> orderVOList = orderListToOrderVOList(orderList);
+        PageInfo orderPageInfo = new PageInfo(orderList);
+        orderPageInfo.setList(orderVOList);
+        return orderPageInfo;
+    }
+
+    @Override
+    public PageInfo listForAdmin(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectAllForAdmin();
+        List<OrderVO> orderVOList = orderListToOrderVOList(orderList);
+        PageInfo orderPageInfo = new PageInfo(orderList);
+        orderPageInfo.setList(orderVOList);
+        return orderPageInfo;
+    }
+
+    private List<OrderVO> orderListToOrderVOList(List<Order> orderList) {
+        List<OrderVO> orderVOList = new ArrayList<>();
+        for (int i = 0; i < orderList.size(); i++) {
+            Order order = orderList.get(i);
+            OrderVO orderVO = getOrderVO(order);
+            orderVOList.add(orderVO);
+        }
+        return orderVOList;
     }
 
     @Override
