@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -179,5 +180,26 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderItemVOList(orderItemVOList);
         orderVO.setOrderStatusName(Constant.OrderStatusEnum.getByCode(orderVO.getStatus()).getName());
         return orderVO;
+    }
+
+    @Override
+    public void cancel(String orderCode){
+        Order order = orderMapper.selectByOrderCode(orderCode);
+        // 订单不存在
+        if(order == null){
+            throw new ShopException(ShopExceptionEnum.NO_ORDER);
+        }
+        // 验证用户身份
+        String userId = UserFilter.curUser.getId();
+        if (!order.getUserId().equals(userId)) {
+            throw new ShopException(ShopExceptionEnum.NOT_YOUR_ORDER);
+        }
+        if (order.getStatus().equals(Constant.OrderStatusEnum.UNPAID.getCode())  ) {
+            order.setStatus(Constant.OrderStatusEnum.CANCELLED.getCode());
+            order.setFinishTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+        }
     }
 }

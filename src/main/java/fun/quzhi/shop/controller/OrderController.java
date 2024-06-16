@@ -29,4 +29,13 @@ public class OrderController {
         OrderVO orderVO = orderService.detail(orderCode);
         return CommonResponse.success(orderVO);
     }
+
+
+    @Operation(summary = "前台订单取消")
+    @PostMapping("order/cancel")
+    public CommonResponse cancel(@RequestParam String orderCode) {
+        orderService.cancel(orderCode);
+        return CommonResponse.success();
+    }
+
 }
