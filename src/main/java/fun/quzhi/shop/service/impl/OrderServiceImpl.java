@@ -1,5 +1,6 @@
 package fun.quzhi.shop.service.impl;
 
+import com.google.zxing.WriterException;
 import fun.quzhi.shop.common.Constant;
 import fun.quzhi.shop.exception.ShopException;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
@@ -18,12 +19,18 @@ import fun.quzhi.shop.model.vo.OrderVO;
 import fun.quzhi.shop.service.CartService;
 import fun.quzhi.shop.service.OrderService;
 import fun.quzhi.shop.util.OrderCodeFactory;
+import fun.quzhi.shop.util.QRCodeGenerator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +51,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
+
+    @Value("${app.file-upload-ip}")
+    String ip;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -201,5 +211,22 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
         }
+    }
+
+    @Override
+    public String qrcode(String orderCode){
+        ServletRequestAttributes attributes =  (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        String address = ip + ":" + request.getLocalPort();
+        String payUrl = "https://" + address + "/pay?orderCode=" + orderCode;
+        try {
+            QRCodeGenerator.generateQRCodeImage(payUrl, 350, 350, Constant.FILE_UPLOAD_PATH + orderCode + ".png");
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        String pngAddress = "http://" + address + "/files/" + orderCode + ".png";
+        return pngAddress;
     }
 }

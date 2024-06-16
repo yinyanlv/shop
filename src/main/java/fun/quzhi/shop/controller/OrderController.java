@@ -6,10 +6,7 @@ import fun.quzhi.shop.model.vo.OrderVO;
 import fun.quzhi.shop.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class OrderController {
@@ -30,12 +27,18 @@ public class OrderController {
         return CommonResponse.success(orderVO);
     }
 
-
     @Operation(summary = "前台订单取消")
     @PostMapping("order/cancel")
     public CommonResponse cancel(@RequestParam String orderCode) {
         orderService.cancel(orderCode);
         return CommonResponse.success();
+    }
+
+    @Operation(summary = "生成订单二维码")
+    @PostMapping("order/qrcode")
+    public CommonResponse qrcode(@RequestParam String orderCode) {
+        String qrcodeUrl = orderService.qrcode(orderCode);
+        return CommonResponse.success(qrcodeUrl);
     }
 
 }

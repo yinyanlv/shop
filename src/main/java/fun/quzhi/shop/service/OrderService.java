@@ -16,4 +16,6 @@ public interface OrderService {
     OrderVO detail(String orderCode);
 
     void cancel(String orderCode);
+
+    String qrcode(String orderCode);
 }
