@@ -51,4 +51,10 @@ public class OrderController {
         return CommonResponse.success(qrcodeUrl);
     }
 
+    @Operation(summary = "支付订单")
+    @PostMapping("pay")
+    public CommonResponse pay(@RequestParam String orderCode) {
+        orderService.pay(orderCode);
+        return CommonResponse.success();
+    }
 }

@@ -262,4 +262,20 @@ public class OrderServiceImpl implements OrderService {
         String pngAddress = "http://" + address + "/files/" + orderCode + ".png";
         return pngAddress;
     }
+
+    @Override
+    public void pay(String orderCode) {
+        Order order = orderMapper.selectByOrderCode(orderCode);
+        // 订单不存在
+        if(order == null){
+            throw new ShopException(ShopExceptionEnum.NO_ORDER);
+        }
+        if (order.getStatus().equals(Constant.OrderStatusEnum.UNPAID.getCode())  ) {
+            order.setStatus(Constant.OrderStatusEnum.PAID.getCode());
+            order.setPayTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
 }

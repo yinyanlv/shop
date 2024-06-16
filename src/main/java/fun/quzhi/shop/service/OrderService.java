@@ -23,4 +23,6 @@ public interface OrderService {
     void cancel(String orderCode);
 
     String qrcode(String orderCode);
+
+    void pay(String orderCode);
 }
