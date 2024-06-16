@@ -13,9 +13,12 @@ import fun.quzhi.shop.model.pojo.OrderItem;
 import fun.quzhi.shop.model.pojo.Product;
 import fun.quzhi.shop.model.request.CreateOrderReq;
 import fun.quzhi.shop.model.vo.CartVO;
+import fun.quzhi.shop.model.vo.OrderItemVO;
+import fun.quzhi.shop.model.vo.OrderVO;
 import fun.quzhi.shop.service.CartService;
 import fun.quzhi.shop.service.OrderService;
 import fun.quzhi.shop.util.OrderCodeFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,5 +149,35 @@ public class OrderServiceImpl implements OrderService {
             totalPrice += orderItem.getTotalPrice();
         }
         return totalPrice;
+    }
+
+    @Override
+    public OrderVO detail(String orderCode) {
+       Order order =  orderMapper.selectByOrderCode(orderCode);
+       if (order == null) {
+            throw new ShopException(ShopExceptionEnum.NO_ORDER);
+       }
+       String userId = UserFilter.curUser.getId();
+       if (!order.getUserId().equals(userId)) {
+           throw new ShopException(ShopExceptionEnum.NOT_YOUR_ORDER);
+       }
+       OrderVO orderVO = getOrderVO(order);
+       return orderVO;
+    }
+
+    private OrderVO getOrderVO(Order order) {
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(order, orderVO);
+        // 获取订单orderItemVOList
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderCode(order.getCode());
+        List<OrderItemVO> orderItemVOList = new ArrayList<>();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemVO orderItemVO = new OrderItemVO();
+            BeanUtils.copyProperties(orderItem, orderItemVO);
+            orderItemVOList.add(orderItemVO);
+        }
+        orderVO.setOrderItemVOList(orderItemVOList);
+        orderVO.setOrderStatusName(Constant.OrderStatusEnum.getByCode(orderVO.getStatus()).getName());
+        return orderVO;
     }
 }
