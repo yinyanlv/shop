@@ -25,4 +25,18 @@ public class OrderAdminController {
         PageInfo pageInfo = orderService.listForAdmin(pageNum, pageSize);
         return CommonResponse.success(pageInfo);
     }
+
+    @Operation(summary = "管理员发货")
+    @PostMapping("admin/order/delivery")
+    public CommonResponse delivery(@RequestParam String orderCode) {
+        orderService.delivery(orderCode);
+        return CommonResponse.success();
+    }
+
+    @Operation(summary = "管理员订单完成")
+    @PostMapping("order/finish")
+    public CommonResponse finish(@RequestParam String orderCode) {
+        orderService.finish(orderCode);
+        return CommonResponse.success();
+    }
 }

@@ -41,13 +41,10 @@ public class UserController {
         if (StringUtils.isEmpty(username)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_USERNAME);
         }
-
         if (StringUtils.isEmpty(password)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_PASSWORD);
         }
-
         userService.register(username, password);
-
         return CommonResponse.success();
     }
 
@@ -57,17 +54,13 @@ public class UserController {
         if (StringUtils.isEmpty(username)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_USERNAME);
         }
-
         if (StringUtils.isEmpty(password)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_PASSWORD);
         }
-
         User user = userService.login(username, password);
         user.setPassword(null);
         user.setSalt(null);
-
         session.setAttribute(Constant.SESSION_USER_KEY, user);
-
         return  CommonResponse.success(user);
     }
 
@@ -78,13 +71,10 @@ public class UserController {
         if (curUser == null) {
             return CommonResponse.error(ShopExceptionEnum.NEED_LOGIN);
         }
-
         User user = new User();
         user.setId(curUser.getId());
         user.setNickname(nickname);
-
         userService.updateUserInfo(user);
-
         return CommonResponse.success();
     }
 
@@ -101,11 +91,9 @@ public class UserController {
         if (StringUtils.isEmpty(username)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_USERNAME);
         }
-
         if (StringUtils.isEmpty(password)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_PASSWORD);
         }
-
         User user = userService.login(username, password);
         if (userService.isAdmin(user))  {
             user.setPassword(null);
@@ -116,6 +104,5 @@ public class UserController {
             return  CommonResponse.error(ShopExceptionEnum.NEED_ADMIN);
         }
     }
-
 }
 

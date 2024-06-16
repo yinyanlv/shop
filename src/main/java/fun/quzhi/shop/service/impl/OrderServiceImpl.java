@@ -20,6 +20,7 @@ import fun.quzhi.shop.model.vo.OrderItemVO;
 import fun.quzhi.shop.model.vo.OrderVO;
 import fun.quzhi.shop.service.CartService;
 import fun.quzhi.shop.service.OrderService;
+import fun.quzhi.shop.service.UserService;
 import fun.quzhi.shop.util.OrderCodeFactory;
 import fun.quzhi.shop.util.QRCodeGenerator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
+
+    @Autowired
+    UserService userService;
 
     @Value("${app.file-upload-ip}")
     String ip;
@@ -250,6 +254,12 @@ public class OrderServiceImpl implements OrderService {
     public String qrcode(String orderCode){
         ServletRequestAttributes attributes =  (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+        // 本机地址，不准确，仅适合本机调试
+//        try {
+//            ip = InetAddress.getLocalHost().getHostAddress();
+//        } catch (UnknownHostException e) {
+//            throw new RuntimeException(e);
+//        }
         String address = ip + ":" + request.getLocalPort();
         String payUrl = "https://" + address + "/pay?orderCode=" + orderCode;
         try {
@@ -273,6 +283,42 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus().equals(Constant.OrderStatusEnum.UNPAID.getCode())  ) {
             order.setStatus(Constant.OrderStatusEnum.PAID.getCode());
             order.setPayTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
+
+    @Override
+    public void delivery(String orderCode) {
+        Order order = orderMapper.selectByOrderCode(orderCode);
+        // 订单不存在
+        if(order == null){
+            throw new ShopException(ShopExceptionEnum.NO_ORDER);
+        }
+        if (order.getStatus().equals(Constant.OrderStatusEnum.PAID.getCode())  ) {
+            order.setStatus(Constant.OrderStatusEnum.DELIVERED.getCode());
+            order.setDeliveryTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
+
+    @Override
+    public void finish(String orderCode) {
+        Order order = orderMapper.selectByOrderCode(orderCode);
+        // 订单不存在
+        if(order == null){
+            throw new ShopException(ShopExceptionEnum.NO_ORDER);
+        }
+        // 非管理员且非自己订单
+        if (!userService.isAdmin(UserFilter.curUser) && !order.getUserId().equals(UserFilter.curUser.getId())) {
+            throw new ShopException(ShopExceptionEnum.NOT_YOUR_ORDER);
+        }
+        if (order.getStatus().equals(Constant.OrderStatusEnum.DELIVERED.getCode())  ) {
+            order.setStatus(Constant.OrderStatusEnum.FINISHED.getCode());
+            order.setFinishTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
             throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
