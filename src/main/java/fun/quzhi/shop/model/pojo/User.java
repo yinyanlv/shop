@@ -9,6 +9,10 @@ public class User {
 
     private String nickname;
 
+    private String phone;
+
+    private String email;
+
     private String password;
 
     private String salt;
@@ -45,6 +49,22 @@ public class User {
 
     public void setNickname(String nickname) {
         this.nickname = nickname == null ? null : nickname.trim();
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 
     public String getPassword() {
