@@ -7,6 +7,7 @@ import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.dao.UserMapper;
 import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.service.UserService;
+import fun.quzhi.shop.util.EmailUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,16 @@ public class UserController {
         } else {
             return  CommonResponse.error(ShopExceptionEnum.NEED_ADMIN);
         }
+    }
+
+    @PostMapping("/user/sendEmail")
+    @ResponseBody
+    public CommonResponse sendEmail(@RequestParam("email") String email) throws ShopException {
+        boolean isValid = EmailUtil.isValidEmail(email);
+        if (!isValid) {
+            return CommonResponse.error(ShopExceptionEnum.INVALID_EMAIL);
+        }
+        return null;
     }
 }
 
