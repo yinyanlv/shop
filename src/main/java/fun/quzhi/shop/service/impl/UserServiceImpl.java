@@ -102,8 +102,16 @@ public class UserServiceImpl implements UserService {
         if (role == 2 || role == 3) {
             return true;
         }
-
         return false;
+    }
+
+    @Override
+    public boolean checkEmailRegistered(String email) {
+        User user = userMapper.selectByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        return true;
     }
 
     public static void main(String[] args) {

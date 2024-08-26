@@ -6,6 +6,7 @@ import fun.quzhi.shop.exception.ShopException;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.dao.UserMapper;
 import fun.quzhi.shop.model.pojo.User;
+import fun.quzhi.shop.service.EmailService;
 import fun.quzhi.shop.service.UserService;
 import fun.quzhi.shop.util.EmailUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,8 +28,12 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/user")
     @ResponseBody
@@ -113,7 +118,12 @@ public class UserController {
         if (!isValid) {
             return CommonResponse.error(ShopExceptionEnum.INVALID_EMAIL);
         }
-        return null;
+        boolean isRegistered = userService.checkEmailRegistered(email);
+        if (isRegistered) {
+            return CommonResponse.error(ShopExceptionEnum.EMAIL_REGISTERED);
+        }
+        emailService.sendSimpleMessage(email, "发送验证码", "欢迎注册，您的验证码是：");
+        return CommonResponse.success();
     }
 }
 

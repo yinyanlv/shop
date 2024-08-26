@@ -30,6 +30,7 @@ public enum ShopExceptionEnum {
     NOT_YOUR_ORDER(10020, "订单不属于你"),
     WRONG_ORDER_STATUS(10021, "订单状态不符"),
     INVALID_EMAIL(10022, "邮箱地址不合法"),
+    EMAIL_REGISTERED(10023, "邮箱已被注册"),
     SYSTEM_ERROR(20000, "系统异常");
 
 

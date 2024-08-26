@@ -16,6 +16,8 @@ import java.util.Set;
 public class Constant {
     public static final String SESSION_USER_KEY = "shop_user";
 
+    public static final String EMAIL_FROM = "1761869346@qq.com";
+
     public static String FILE_UPLOAD_PATH;
 
     @Value("${app.file-upload-path}")
