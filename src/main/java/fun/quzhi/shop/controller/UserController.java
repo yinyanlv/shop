@@ -11,6 +11,7 @@ import fun.quzhi.shop.service.UserService;
 import fun.quzhi.shop.util.EmailUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -122,8 +123,14 @@ public class UserController {
         if (isRegistered) {
             return CommonResponse.error(ShopExceptionEnum.EMAIL_REGISTERED);
         }
-        emailService.sendSimpleMessage(email, "发送验证码", "欢迎注册，您的验证码是：");
-        return CommonResponse.success();
+        String verifyCode = EmailUtil.genVerifyCode();
+        boolean isSaved = emailService.saveEmailToRedis(email, verifyCode);
+        if (isSaved) {
+            emailService.sendSimpleMessage(email, "发送验证码", "欢迎注册，您的验证码是：" + verifyCode);
+            return CommonResponse.success();
+        } else {
+            return CommonResponse.error(ShopExceptionEnum.EMAIL_ALREADY_SEND);
+        }
     }
 }
 
