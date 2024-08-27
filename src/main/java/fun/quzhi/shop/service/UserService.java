@@ -10,7 +10,7 @@ public interface UserService {
 
     User getUser(String id);
 
-    void register(String username, String password) throws ShopException;
+    void register(String username, String password, String email) throws ShopException;
 
     User login(String username, String password) throws ShopException;
 

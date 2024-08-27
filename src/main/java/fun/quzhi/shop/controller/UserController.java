@@ -44,14 +44,36 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseBody
-    public CommonResponse register(@RequestParam("username") String username, @RequestParam("password") String password) throws ShopException {
+    public CommonResponse register(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam("email") String email,
+            @RequestParam("verifyCode") String verifyCode
+    ) throws ShopException {
         if (StringUtils.isEmpty(username)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_USERNAME);
         }
         if (StringUtils.isEmpty(password)) {
             return CommonResponse.error(ShopExceptionEnum.NEED_PASSWORD);
         }
-        userService.register(username, password);
+        if (StringUtils.isEmpty(email)) {
+            return CommonResponse.error(ShopExceptionEnum.EMAIL_REQUIRED);
+        }
+        if (StringUtils.isEmpty(verifyCode)) {
+            return CommonResponse.error(ShopExceptionEnum.VERIFY_CODE_REQUIRED);
+        }
+        // 判断邮箱是否已注册
+        boolean isRegistered = userService.checkEmailRegistered(email);
+        if (isRegistered) {
+            return CommonResponse.error(ShopExceptionEnum.EMAIL_REGISTERED);
+        }
+        // 校验邮箱和验证码是否匹配
+        boolean isVerifyCodeValid = emailService.checkEmailAndVerifyCode(email, verifyCode);
+        if (!isVerifyCodeValid)  {
+            return CommonResponse.error(ShopExceptionEnum.VERIFY_CODE_INVALID);
+        }
+
+        userService.register(username, password, email);
         return CommonResponse.success();
     }
 

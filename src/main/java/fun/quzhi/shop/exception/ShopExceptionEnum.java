@@ -32,6 +32,9 @@ public enum ShopExceptionEnum {
     INVALID_EMAIL(10022, "邮箱地址不合法"),
     EMAIL_REGISTERED(10023, "邮箱已被注册"),
     EMAIL_ALREADY_SEND(10024, "邮箱已发送"),
+    EMAIL_REQUIRED(10025, "邮箱不能为空"),
+    VERIFY_CODE_REQUIRED(10026, "验证码不能为空"),
+    VERIFY_CODE_INVALID(10026, "验证码不正确"),
     SYSTEM_ERROR(20000, "系统异常");
 
 

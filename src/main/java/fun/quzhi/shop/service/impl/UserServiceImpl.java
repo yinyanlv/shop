@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(String username, String password) throws ShopException {
+    public void register(String username, String password, String email) throws ShopException {
         // 查询用户名是否已存在
         User res = userMapper.selectByUsername(username);
         if (res != null) {
@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
 
         user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
+        user.setEmail(email);
         try {
             user.setPassword(MD5Utils.getPasswordMD5Str(password, appSalt));
         } catch(NoSuchAlgorithmException e) {
