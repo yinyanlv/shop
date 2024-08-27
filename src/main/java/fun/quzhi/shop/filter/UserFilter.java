@@ -1,6 +1,14 @@
 package fun.quzhi.shop.filter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import fun.quzhi.shop.common.Constant;
+import fun.quzhi.shop.exception.ShopException;
+import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.pojo.User;
 import fun.quzhi.shop.service.UserService;
 import jakarta.servlet.*;
@@ -31,22 +39,51 @@ public class UserFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
        HttpServletRequest req =  (HttpServletRequest)servletRequest;
-       HttpSession session = req.getSession();
-        curUser = (User)session.getAttribute(Constant.SESSION_USER_KEY);
-
-        if (curUser == null) {
+//       HttpSession session = req.getSession();
+//        curUser = (User)session.getAttribute(Constant.SESSION_USER_KEY);
+//        if (user == null) {
+//            HttpServletResponseWrapper  wrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
+//            wrapper.setContentType("application/json;charset=UTF-8");
+//            PrintWriter out =  wrapper.getWriter();
+//            out.write("{\n" +
+//                    "    \"success\": false,\n" +
+//                    "    \"status\": 10006,\n" +
+//                    "    \"message\": \"用户未登录\",\n" +
+//                    "    \"result\": null\n" +
+//                    "}");
+//            out.flush();
+//            out.close();
+//            return;
+//        }
+        String token = req.getParameter(Constant.JWT_HEADER_TOKEN_KEY);
+        if (token == null) {
             HttpServletResponseWrapper  wrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
             wrapper.setContentType("application/json;charset=UTF-8");
             PrintWriter out =  wrapper.getWriter();
             out.write("{\n" +
                     "    \"success\": false,\n" +
                     "    \"status\": 10006,\n" +
-                    "    \"message\": \"用户未登录\",\n" +
+                    "    \"message\": \"jwt token required\",\n" +
                     "    \"result\": null\n" +
                     "}");
             out.flush();
             out.close();
             return;
+        }
+        Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        try {
+            DecodedJWT jwt = verifier.verify(token);
+            curUser = new User();
+            curUser.setId(jwt.getClaim(Constant.USER_ID).asString());
+            curUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
+            curUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
+        } catch (TokenExpiredException e) {
+            // token过期
+            throw new ShopException(ShopExceptionEnum.TOKEN_EXPIRED);
+        } catch (JWTDecodeException e) {
+            // token解析失败
+            throw new ShopException(ShopExceptionEnum.TOKEN_INVALID);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);

@@ -78,4 +78,11 @@ public class Constant {
             this.name = name;
         }
     }
+
+    public static final String JWT_KEY = "quzhi-shop";
+    public static final String JWT_HEADER_TOKEN_KEY = "x-token";
+    public static final String USER_NAME = "username";
+    public static final String USER_ID = "userId";
+    public static final String USER_ROLE = "role";
+    public static final Long JWT_EXPIRE_TIME =  60 * 1000 * 60 * 24 * 30L; //  30天，单位毫秒
 }

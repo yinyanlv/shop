@@ -1,5 +1,7 @@
 package fun.quzhi.shop.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import fun.quzhi.shop.common.CommonResponse;
 import fun.quzhi.shop.common.Constant;
 import fun.quzhi.shop.exception.ShopException;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Date;
 
 /**
  * 用户
@@ -153,6 +157,29 @@ public class UserController {
         } else {
             return CommonResponse.error(ShopExceptionEnum.EMAIL_ALREADY_SEND);
         }
+    }
+
+    @PostMapping("/loginWithJwt")
+    @ResponseBody
+    public CommonResponse loginWithJwt(@RequestParam String username, @RequestParam String password) {
+        if (StringUtils.isEmpty(username)) {
+            return CommonResponse.error(ShopExceptionEnum.NEED_USERNAME);
+        }
+        if (StringUtils.isEmpty(password)) {
+            return CommonResponse.error(ShopExceptionEnum.NEED_PASSWORD);
+        }
+        User user = userService.login(username, password);
+        user.setPassword(null);
+        user.setSalt(null);
+        Algorithm algorithm =  Algorithm.HMAC256(Constant.JWT_KEY);
+        String token = JWT.create()
+                .withClaim(Constant.USER_NAME, user.getUsername())
+                .withClaim(Constant.USER_ID, user.getId())
+                .withClaim(Constant.USER_ROLE, user.getRole())
+                .withExpiresAt(new Date(System.currentTimeMillis() + Constant.JWT_EXPIRE_TIME))
+                .sign(algorithm);
+
+        return  CommonResponse.success(token);
     }
 }
 

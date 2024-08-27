@@ -34,7 +34,9 @@ public enum ShopExceptionEnum {
     EMAIL_ALREADY_SEND(10024, "邮箱已发送"),
     EMAIL_REQUIRED(10025, "邮箱不能为空"),
     VERIFY_CODE_REQUIRED(10026, "验证码不能为空"),
-    VERIFY_CODE_INVALID(10026, "验证码不正确"),
+    VERIFY_CODE_INVALID(10027, "验证码不正确"),
+    TOKEN_EXPIRED(10029, "token过期"),
+    TOKEN_INVALID(10030, "token无效"),
     SYSTEM_ERROR(20000, "系统异常");
 
 
