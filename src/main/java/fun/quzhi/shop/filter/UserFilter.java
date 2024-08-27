@@ -39,6 +39,8 @@ public class UserFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
        HttpServletRequest req =  (HttpServletRequest)servletRequest;
+       HttpSession session = req.getSession(true); // 创建一个新的session或获取现有的session
+
 //       HttpSession session = req.getSession();
 //        curUser = (User)session.getAttribute(Constant.SESSION_USER_KEY);
 //        if (user == null) {
@@ -55,7 +57,7 @@ public class UserFilter implements Filter {
 //            out.close();
 //            return;
 //        }
-        String token = req.getParameter(Constant.JWT_HEADER_TOKEN_KEY);
+        String token = req.getHeader(Constant.JWT_HEADER_TOKEN_KEY);
         if (token == null) {
             HttpServletResponseWrapper  wrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
             wrapper.setContentType("application/json;charset=UTF-8");
@@ -78,6 +80,7 @@ public class UserFilter implements Filter {
             curUser.setId(jwt.getClaim(Constant.USER_ID).asString());
             curUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
             curUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
+            session.setAttribute(Constant.SESSION_USER_KEY, curUser); // 将用户信息存储在session中
         } catch (TokenExpiredException e) {
             // token过期
             throw new ShopException(ShopExceptionEnum.TOKEN_EXPIRED);
