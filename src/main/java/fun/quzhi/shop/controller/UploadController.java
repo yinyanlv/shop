@@ -6,12 +6,15 @@ import fun.quzhi.shop.exception.ShopException;
 import fun.quzhi.shop.exception.ShopExceptionEnum;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -23,20 +26,13 @@ import java.util.UUID;
 public class UploadController {
     @PostMapping("admin/upload/file")
     @ResponseBody
-    public CommonResponse upload(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file){
+    public CommonResponse uploadFile(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file){
         String fileName = file.getOriginalFilename();
         String ext = fileName.substring(fileName.lastIndexOf("."));
         String  uuidFileName =  UUID.randomUUID().toString() + ext;
         File fileDir = new File(Constant.FILE_UPLOAD_PATH);
         File destFile = new File(Constant.FILE_UPLOAD_PATH + uuidFileName);
-        if (!fileDir.exists() && !fileDir.mkdir()) {
-            throw new ShopException(ShopExceptionEnum.UPLOAD_DIR_ERROR);
-        }
-        try {
-            file.transferTo(destFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        createFile(file, fileDir, destFile);
         String fileUrl;
         try {
             fileUrl = getHost(new URI(httpServletRequest.getRequestURL() + "")) + "/files/" + uuidFileName;
@@ -47,6 +43,42 @@ public class UploadController {
         }
 
         return CommonResponse.success(fileUrl);
+    }
+
+    @PostMapping("admin/upload/image")
+    @ResponseBody
+    public CommonResponse uploadImage(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+        String ext = fileName.substring(fileName.lastIndexOf("."));
+        String  uuidFileName =  UUID.randomUUID().toString() + ext;
+        File fileDir = new File(Constant.FILE_UPLOAD_PATH);
+        File destFile = new File(Constant.FILE_UPLOAD_PATH + uuidFileName);
+        createFile(file, fileDir, destFile);
+        Thumbnails.of(destFile)
+                .size(Constant.IMAGE_SIZE, Constant.IMAGE_SIZE)
+                .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(Constant.FILE_UPLOAD_PATH + Constant.WATER_MARK_JPG)), Constant.IMAGE_OPACITY)
+                .toFile(new File(Constant.FILE_UPLOAD_PATH + uuidFileName));
+        String fileUrl;
+        try {
+            fileUrl = getHost(new URI(httpServletRequest.getRequestURL() + "")) + "/files/" + uuidFileName;
+            // TODO, 入库
+        } catch(URISyntaxException e) {
+            e.printStackTrace();
+            return CommonResponse.error(ShopExceptionEnum.UPLOAD_FILE_FAILED);
+        }
+
+        return CommonResponse.success(fileUrl);
+    }
+
+    private static void createFile(MultipartFile file, File fileDir, File destFile) {
+        if (!fileDir.exists() && !fileDir.mkdir()) {
+            throw new ShopException(ShopExceptionEnum.UPLOAD_DIR_ERROR);
+        }
+        try {
+            file.transferTo(destFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private URI getHost(URI uri) {

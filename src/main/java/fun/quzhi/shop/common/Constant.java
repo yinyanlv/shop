@@ -18,6 +18,9 @@ public class Constant {
     public static final String EMAIL_FROM = "1761869346@qq.com";
 
     public static String FILE_UPLOAD_PATH;
+    public static Integer IMAGE_SIZE = 500;
+    public static Float IMAGE_OPACITY = 0.5f;
+    public static String WATER_MARK_JPG = "water_mark.jpg";
 
     @Value("${app.file-upload-path}")
     public void setFileUploadPath(String fileUploadPath) {
