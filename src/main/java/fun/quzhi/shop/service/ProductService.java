@@ -5,6 +5,9 @@ import fun.quzhi.shop.model.pojo.Product;
 import fun.quzhi.shop.model.request.AddProductReq;
 import fun.quzhi.shop.model.request.ProductListReq;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * 商品
  */
@@ -22,4 +25,6 @@ public interface ProductService {
     Product detail(Integer id);
 
     PageInfo list(ProductListReq productListReq);
+
+    void addProductByExcel(File file) throws IOException;
 }

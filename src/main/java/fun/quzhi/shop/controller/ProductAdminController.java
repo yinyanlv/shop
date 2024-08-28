@@ -2,6 +2,9 @@ package fun.quzhi.shop.controller;
 
 import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.common.CommonResponse;
+import fun.quzhi.shop.common.Constant;
+import fun.quzhi.shop.exception.ShopException;
+import fun.quzhi.shop.exception.ShopExceptionEnum;
 import fun.quzhi.shop.model.pojo.Product;
 import fun.quzhi.shop.model.request.AddProductReq;
 import fun.quzhi.shop.model.request.UpdateProductReq;
@@ -16,6 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Tag(name = "后台商品管理")
 @Controller
@@ -51,7 +59,7 @@ public class ProductAdminController {
     }
 
     @Operation(summary = "批量更新商品状态")
-    @PostMapping("admin/product/batch-update-status")
+    @PostMapping("admin/product/batchUpdateStatus")
     @ResponseBody
     public CommonResponse batchUpdateStatus( @RequestParam Integer[] ids, Integer status) {
         productService.batchUpdateStatus(ids, status);
@@ -64,6 +72,30 @@ public class ProductAdminController {
     public CommonResponse list( @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         PageInfo pageInfo = productService.listForAdmin(pageNum, pageSize);
         return CommonResponse.success(pageInfo);
+    }
+
+    @Operation(summary = "批量上传商品")
+    @PostMapping("admin/importProduct")
+    @ResponseBody
+    public CommonResponse batchUploadProduct(@RequestParam("file") MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+        String ext = fileName.substring(fileName.lastIndexOf("."));
+        UUID uuid =  UUID.randomUUID();
+        String newFileName = uuid +  ext;
+        File dir =  new File(Constant.FILE_UPLOAD_PATH);
+        File destFile = new File(Constant.FILE_UPLOAD_PATH + newFileName);
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
+                throw new ShopException(ShopExceptionEnum.UPLOAD_DIR_ERROR);
+            }
+        }
+        try {
+            file.transferTo(destFile);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        productService.addProductByExcel(destFile);
+        return CommonResponse.success();
     }
 }
 
