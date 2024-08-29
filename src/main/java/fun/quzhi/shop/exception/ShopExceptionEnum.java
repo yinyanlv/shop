@@ -37,6 +37,10 @@ public enum ShopExceptionEnum {
     VERIFY_CODE_INVALID(10027, "验证码不正确"),
     TOKEN_EXPIRED(10029, "token过期"),
     TOKEN_INVALID(10030, "token无效"),
+    CANCEL_AFTER_PAY(10031, "付款后不支持取消订单"),
+    ORDER_PAYED(10032, "订单已支付"),
+    ORDER_UNPAY(10033, "订单未支付，不能发货"),
+    ORDER_FINISH_ERROR(10034, "订单未发货，不能完结订单"),
     SYSTEM_ERROR(20000, "系统异常");
 
 

@@ -58,8 +58,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     UserService userService;
 
-    @Value("${app.file-upload-ip}")
-    String ip;
+    @Value("${app.file-upload-uri}")
+    String fileUploadURI;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -246,7 +246,7 @@ public class OrderServiceImpl implements OrderService {
             order.setFinishTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ShopException(ShopExceptionEnum.CANCEL_AFTER_PAY);
         }
     }
 
@@ -260,8 +260,7 @@ public class OrderServiceImpl implements OrderService {
 //        } catch (UnknownHostException e) {
 //            throw new RuntimeException(e);
 //        }
-        String address = ip + ":" + request.getLocalPort();
-        String payUrl = "https://" + address + "/pay?orderCode=" + orderCode;
+        String payUrl = fileUploadURI + "/pay?orderCode=" + orderCode;
         try {
             QRCodeGenerator.generateQRCodeImage(payUrl, 350, 350, Constant.FILE_UPLOAD_PATH + orderCode + ".png");
         } catch (WriterException e) {
@@ -269,7 +268,7 @@ public class OrderServiceImpl implements OrderService {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        String pngAddress = "http://" + address + "/files/" + orderCode + ".png";
+        String pngAddress =  fileUploadURI + "/files/" + orderCode + ".png";
         return pngAddress;
     }
 
@@ -285,7 +284,7 @@ public class OrderServiceImpl implements OrderService {
             order.setPayTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ShopException(ShopExceptionEnum.ORDER_PAYED);
         }
     }
 
@@ -301,7 +300,7 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ShopException(ShopExceptionEnum.ORDER_UNPAY);
         }
     }
 
@@ -321,7 +320,7 @@ public class OrderServiceImpl implements OrderService {
             order.setFinishTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ShopException(ShopExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ShopException(ShopExceptionEnum.ORDER_FINISH_ERROR);
         }
     }
 }

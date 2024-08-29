@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,10 @@ import java.util.UUID;
 @Tag(name = "文件上传")
 @Controller
 public class UploadController {
+
+    @Value("${app.file-upload-uri}")
+    String fileUploadURI;
+
     @PostMapping("admin/upload/file")
     @ResponseBody
     public CommonResponse uploadFile(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file){
@@ -33,15 +38,8 @@ public class UploadController {
         File fileDir = new File(Constant.FILE_UPLOAD_PATH);
         File destFile = new File(Constant.FILE_UPLOAD_PATH + uuidFileName);
         createFile(file, fileDir, destFile);
-        String fileUrl;
-        try {
-            fileUrl = getHost(new URI(httpServletRequest.getRequestURL() + "")) + "/files/" + uuidFileName;
-            // TODO, 入库
-        } catch(URISyntaxException e) {
-            e.printStackTrace();
-            return CommonResponse.error(ShopExceptionEnum.UPLOAD_FILE_FAILED);
-        }
-
+        String fileUrl = fileUploadURI + "/files/" + uuidFileName;
+        // TODO, 入库
         return CommonResponse.success(fileUrl);
     }
 
@@ -58,15 +56,8 @@ public class UploadController {
                 .size(Constant.IMAGE_SIZE, Constant.IMAGE_SIZE)
                 .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(Constant.FILE_UPLOAD_PATH + Constant.WATER_MARK_JPG)), Constant.IMAGE_OPACITY)
                 .toFile(new File(Constant.FILE_UPLOAD_PATH + uuidFileName));
-        String fileUrl;
-        try {
-            fileUrl = getHost(new URI(httpServletRequest.getRequestURL() + "")) + "/files/" + uuidFileName;
-            // TODO, 入库
-        } catch(URISyntaxException e) {
-            e.printStackTrace();
-            return CommonResponse.error(ShopExceptionEnum.UPLOAD_FILE_FAILED);
-        }
-
+        String fileUrl = fileUploadURI + "/files/" + uuidFileName;
+        // TODO, 入库
         return CommonResponse.success(fileUrl);
     }
 
