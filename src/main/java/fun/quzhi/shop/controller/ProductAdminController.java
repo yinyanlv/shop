@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "后台商品管理")
@@ -95,6 +96,19 @@ public class ProductAdminController {
             e.printStackTrace();
         }
         productService.addProductByExcel(destFile);
+        return CommonResponse.success();
+    }
+
+    @Operation(summary = "批量更新商品")
+    @PostMapping("admin/product/batchUpdate")
+    @ResponseBody
+    public CommonResponse batchUpdateProduct(@Valid @RequestBody List<UpdateProductReq> updateProductReqList) {
+        for (int i = 0; i < updateProductReqList.size(); i++) {
+           UpdateProductReq updateProductReq = updateProductReqList.get(i);
+            Product product = new Product();
+            BeanUtils.copyProperties(updateProductReq, product);
+            productService.update(product);
+        }
         return CommonResponse.success();
     }
 }
