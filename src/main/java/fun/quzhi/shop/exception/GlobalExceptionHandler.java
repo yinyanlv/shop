@@ -1,15 +1,19 @@
 package fun.quzhi.shop.exception;
 
 import fun.quzhi.shop.common.CommonResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.*;
@@ -43,6 +47,9 @@ public class GlobalExceptionHandler {
         return handleBindingResult(e.getBindingResult());
     }
 
+    /**
+     * 不使用@Validated注解
+     */
     @ExceptionHandler(HandlerMethodValidationException.class)
     @ResponseBody
     public Object handlerMethodValidationException(HandlerMethodValidationException e) {
@@ -63,6 +70,23 @@ public class GlobalExceptionHandler {
         }
 
         return CommonResponse.error(ShopExceptionEnum.REQUEST_PARAM_ERROR.getCode(), list.toString());
+    }
+
+    /**
+     * 使用@Validated注解
+     */
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResponse handleException(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        StringBuilder builder = new StringBuilder();
+        for (ConstraintViolation<?> violation : violations) {
+            builder.append(violation.getMessage());
+            // 只返回第一个错误
+            break;
+        }
+        return CommonResponse.error(ShopExceptionEnum.REQUEST_PARAM_ERROR.getCode(), builder.toString());
     }
 
     private CommonResponse handleBindingResult(BindingResult result) {

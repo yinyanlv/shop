@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,7 @@ import java.util.UUID;
 
 @Tag(name = "后台商品管理")
 @Controller
+@Validated
 public class ProductAdminController {
 
     @Autowired
