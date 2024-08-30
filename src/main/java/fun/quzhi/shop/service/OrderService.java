@@ -3,8 +3,10 @@ package fun.quzhi.shop.service;
 import com.github.pagehelper.PageInfo;
 import fun.quzhi.shop.model.request.CreateOrderReq;
 import fun.quzhi.shop.model.vo.CartVO;
+import fun.quzhi.shop.model.vo.OrderStatisticsVO;
 import fun.quzhi.shop.model.vo.OrderVO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,4 +31,6 @@ public interface OrderService {
     void delivery(String orderCode);
 
     void finish(String orderCode);
+
+    List<OrderStatisticsVO> statistics(Date startDate, Date endDate);
 }

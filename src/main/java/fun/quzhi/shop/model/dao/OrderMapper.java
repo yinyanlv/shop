@@ -1,6 +1,9 @@
 package fun.quzhi.shop.model.dao;
 
 import fun.quzhi.shop.model.pojo.Order;
+import fun.quzhi.shop.model.query.OrderStatisticsQuery;
+import fun.quzhi.shop.model.vo.OrderStatisticsVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,4 +25,6 @@ public interface OrderMapper {
     List<Order> selectForCustomer(String userId);
 
     List<Order> selectAllForAdmin();
+
+    List<OrderStatisticsVO> selectOrderStatistics(@Param("query") OrderStatisticsQuery query);
 }

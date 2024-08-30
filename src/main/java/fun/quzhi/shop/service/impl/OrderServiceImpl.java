@@ -14,9 +14,11 @@ import fun.quzhi.shop.model.dao.ProductMapper;
 import fun.quzhi.shop.model.pojo.Order;
 import fun.quzhi.shop.model.pojo.OrderItem;
 import fun.quzhi.shop.model.pojo.Product;
+import fun.quzhi.shop.model.query.OrderStatisticsQuery;
 import fun.quzhi.shop.model.request.CreateOrderReq;
 import fun.quzhi.shop.model.vo.CartVO;
 import fun.quzhi.shop.model.vo.OrderItemVO;
+import fun.quzhi.shop.model.vo.OrderStatisticsVO;
 import fun.quzhi.shop.model.vo.OrderVO;
 import fun.quzhi.shop.service.CartService;
 import fun.quzhi.shop.service.OrderService;
@@ -322,5 +324,14 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new ShopException(ShopExceptionEnum.ORDER_FINISH_ERROR);
         }
+    }
+
+    @Override
+    public List<OrderStatisticsVO> statistics(Date startDate, Date endDate) {
+        OrderStatisticsQuery query = new OrderStatisticsQuery();
+        query.setStartDate(startDate);
+        query.setEndDate(endDate);
+        List<OrderStatisticsVO> list =  orderMapper.selectOrderStatistics(query);
+        return list;
     }
 }

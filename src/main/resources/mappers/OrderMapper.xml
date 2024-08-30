@@ -249,4 +249,22 @@
     from shop_order
     order by create_time desc
   </select>
+  <resultMap id="listOrderStatisticsMap" type="fun.quzhi.shop.model.vo.OrderStatisticsVO">
+    <result column="day" jdbcType="TIMESTAMP" property="day"/>
+    <result column="amount" jdbcType="INTEGER" property="amount"/>
+  </resultMap>
+  <select id="selectOrderStatistics" resultMap="listOrderStatisticsMap">
+    select date_format(from_unixtime(UNIX_TIMESTAMP(create_time)), "%Y-%m-%d") as day, count(*) as amount
+    from shop_order
+    <where>
+      <if test="query.startDate != null">
+        <![CDATA[ and create_time >= #{query.startDate} ]]>
+      </if>
+      <if test="query.endDate != null">
+        <![CDATA[ and create_time <= #{query.endDate} ]]>
+      </if>
+    </where>
+    group by day
+    order by day
+  </select>
 </mapper>
